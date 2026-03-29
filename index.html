@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SmartMart</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+    text-align: center;
+}
+
+h1 { margin-top: 30px; }
+
+.search-box { margin: 30px; }
+
+input {
+    padding: 12px;
+    width: 250px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    background: #00c9a7;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #00b894;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    color: black;
+    width: 280px;
+    padding: 15px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+}
+
+.price {
+    color: green;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.best {
+    margin-top: 20px;
+    font-size: 22px;
+    color: yellow;
+}
+
+#loading { margin-top: 20px; }
+
+/* 🤖 CHATBOT */
+#chatbot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 260px;
+    background: white;
+    color: black;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+#chatbox {
+    height: 180px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🛒 SmartMart</h1>
+
+<div class="search-box">
+    <input type="text" id="search" placeholder="Search product..." onkeypress="handleEnter(event)">
+    <button onclick="searchProduct()">Search</button>
+</div>
+
+<div id="loading"></div>
+<div id="results"></div>
+
+<!-- 🤖 CHATBOT -->
+<div id="chatbot">
+    <div id="chatbox"></div>
+    <input type="text" id="chatInput" placeholder="Ask me..." onkeypress="handleChat(event)">
+</div>
+
+<script>
+// Enter key search
+function handleEnter(e) {
+    if (e.key === "Enter") searchProduct();
+}
+
+// Buy button
+function openProduct(link, query) {
+    if (link && link !== "undefined") {
+        window.open(link, "_blank");
+    } else {
+        window.open(`https://www.amazon.in/s?k=${query}`, "_blank");
+    }
+}
+
+// Search
+async function searchProduct() {
+    const query = document.getElementById("search").value.trim();
+    const resultsDiv = document.getElementById("results");
+    const loading = document.getElementById("loading");
+
+    if (!query) return;
+
+    loading.innerHTML = "⏳ Fetching...";
+    resultsDiv.innerHTML = "";
+
+    const res = await fetch(`/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+
+    loading.innerHTML = "";
+
+    if (!data.results || data.results.length === 0) {
+        resultsDiv.innerHTML = "No products found";
+        return;
+    }
+
+    let html = `<h2>${data.product}</h2><div class="container">`;
+
+    data.results.forEach(item => {
+        html += `
+        <div class="card">
+            <h3>${item.site}</h3>
+            <img src="${item.image || 'https://via.placeholder.com/150'}">
+            <p>${item.name}</p>
+            <p class="price">₹${item.price || "-"}</p>
+            <button onclick="openProduct('${item.link}', '${data.product}')">Buy</button>
+        </div>`;
+    });
+
+    html += "</div>";
+
+    if (data.best) {
+        html += `<div class="best">🏆 Best: ${data.best.site} ₹${data.best.price}</div>`;
+    } else {
+        html += `<div class="best">⚠ Showing search results</div>`;
+    }
+
+    resultsDiv.innerHTML = html;
+}
+
+// 🤖 SMART CHATBOT (NO API)
+function handleChat(e) {
+    if (e.key === "Enter") {
+        const input = document.getElementById("chatInput").value.toLowerCase();
+        const chatbox = document.getElementById("chatbox");
+
+        if (!input.trim()) return;
+
+        chatbox.innerHTML += `<p><b>You:</b> ${input}</p>`;
+
+        let reply = "🔍 Try searching product above";
+
+        if (input.includes("best")) {
+            reply = "🏆 Check the Best Deal shown above!";
+        }
+        else if (input.includes("cheap") || input.includes("low") || input.includes("discount")) {
+            reply = "💰 Lowest price product is highlighted above";
+        }
+        else if (input.includes("amazon")) {
+            reply = "Amazon has good quality products 👍";
+        }
+        else if (input.includes("flipkart")) {
+            reply = "Flipkart usually has better discounts 🔥";
+        }
+        else if (input.includes("buy")) {
+            reply = "🛒 Click on Buy button to open product page";
+        }
+        else if (input.includes("help") || input.includes("how")) {
+            reply = "📖 Use the search box to find products, compare prices, and click Buy!";
+        }
+        else if (input.includes("hi") || input.includes("hello")) {
+            reply = "👋 Welcome to SmartMart! Search for any product you need.";
+        }
+        else if (input.includes("price") || input.includes("cost")) {
+            reply = "💵 Search a product to see prices from different stores!";
+        }
+        else if (input.includes("quality")) {
+            reply = "⭐ All listed stores are reliable. Check reviews before buying!";
+        }
+        else if (input.includes("store") || input.includes("shop")) {
+            reply = "🏪 We compare prices from Amazon, Flipkart, and more!";
+        }
+        else if (input.includes("delivery")) {
+            reply = "🚚 Check delivery options on the product page!";
+        }
+        else if (input.includes("return") || input.includes("refund")) {
+            reply = "↩️ Return policies vary by store. Check before buying!";
+        }
+        else if (input.includes("warranty")) {
+            reply = "🛡️ Most products have warranty. Check store details!";
+        }
+        else if (input.includes("payment")) {
+            reply = "💳 All stores accept credit card, debit card, and UPI!";
+        }
+        else if (input.includes("app")) {
+            reply = "📱 Use mobile apps for faster checkout!";
+        }
+        else if (input.includes("coupon") || input.includes("offer")) {
+            reply = "🎉 Check for active coupons on store pages!";
+        }
+        else if (input.includes("review") || input.includes("rating")) {
+            reply = "⭐ Read customer reviews on product pages!";
+        }
+        else if (input.includes("size") || input.includes("color")) {
+            reply = "🎨 Check available options on the product page!";
+        }
+        else if (input.includes("stock") || input.includes("available")) {
+            reply = "📦 Click Buy to check current stock availability!";
+        }
+        else if (input.includes("electronic") || input.includes("gadget")) {
+            reply = "⚡ Electronics are popular! Search and compare now!";
+        }
+        else if (input.includes("clothing") || input.includes("fashion")) {
+            reply = "👕 Fashion items have great deals right now!";
+        }
+        else if (input.includes("phone") || input.includes("mobile")) {
+            reply = "📱 Compare smartphone prices across stores!";
+        }
+        else if (input.includes("laptop") || input.includes("computer")) {
+            reply = "💻 Check tech specs before purchasing!";
+        }
+        else if (input.includes("camera")) {
+            reply = "📷 Compare camera quality and price!";
+        }
+        else if (input.includes("headphone") || input.includes("speaker")) {
+            reply = "🎧 Great audio deals available!";
+        }
+        else if (input.includes("watch")) {
+            reply = "⌚ Smartwatches and traditional watches available!";
+        }
+        else if (input.includes("book")) {
+            reply = "📚 Books have best prices on online stores!";
+        }
+        else if (input.includes("toy")) {
+            reply = "🧸 Toys and games with exciting discounts!";
+        }
+        else if (input.includes("furniture")) {
+            reply = "🪑 Furniture shopping made easy!";
+        }
+        else if (input.includes("home") || input.includes("kitchen")) {
+            reply = "🏠 Home and kitchen essentials at great prices!";
+        }
+        else if (input.includes("beauty") || input.includes("cosmetic")) {
+            reply = "💄 Beauty products with best ratings!";
+        }
+        else if (input.includes("sports") || input.includes("fitness")) {
+            reply = "⚽ Sports gear and fitness equipment available!";
+        }
+        else if (input.includes("pet")) {
+            reply = "🐾 Pet supplies and accessories!";
+        }
+        else if (input.includes("thank")) {
+            reply = "😊 Thank you! Happy shopping!";
+        }
+        else if (input.includes("bye") || input.includes("ok")) {
+            reply = "👋 See you soon!";
+        }
+
+        chatbox.innerHTML += `<p><b>AI:</b> ${reply}</p>`;
+
+        document.getElementById("chatInput").value = "";
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+}
+</script>
+
+</body>
+</html>

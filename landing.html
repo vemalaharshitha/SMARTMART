@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SmartMart · AI Price Comparison</title>
+  <!-- Google Fonts: modern sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (free icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #1a1e2b;
+      scroll-behavior: smooth;
+    }
+
+    /* Glassmorphism containers & modern backdrop */
+    .glass-card, .feature-card, .testimonial-card, .demo-card, .signup-container {
+      background: rgba(255, 255, 255, 0.92);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0,0,0,0.05);
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover, .feature-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.97);
+      box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.3);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    section {
+      padding: 5rem 0;
+    }
+
+    /* gradient text */
+    .gradient-text {
+      background: linear-gradient(120deg, #5b47b0, #a45ee5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 4.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #1E1F3F, #4B2A6B);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      border-radius: 3rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(100deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 8px 18px rgba(102,126,234,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 28px -8px rgba(102,126,234,0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #764ba2;
+      color: #4a2f6b;
+    }
+
+    .btn-outline:hover {
+      background: rgba(118,75,162,0.08);
+      border-color: #5b3c8c;
+    }
+
+    /* navbar */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(130deg, #FFFFFF, #e9d4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    /* Hero 3D mockup & floating cards */
+    .hero-grid {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3rem;
+      margin-top: 2rem;
+    }
+
+    .hero-left {
+      flex: 1.2;
+    }
+
+    .hero-right {
+      flex: 1;
+      position: relative;
+    }
+
+    .floating-card {
+      background: rgba(255,255,255,0.95);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-radius: 28px;
+      padding: 1.2rem;
+      width: 280px;
+      box-shadow: 0 30px 40px -15px rgba(0,0,0,0.2);
+      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      animation: float 5s infinite alternate ease-in-out;
+    }
+
+    .floating-card:nth-child(1) {
+      transform: translateY(-10px) rotate(-2deg);
+      animation-delay: 0s;
+    }
+
+    .floating-card:nth-child(2) {
+      transform: translateY(20px) rotate(3deg);
+      animation-delay: 0.6s;
+    }
+
+    @keyframes float {
+      0% { opacity: 1; }
+      100% { opacity: 1; }
+    }
+
+    .price-badge {
+      background: #e0e7ff;
+      border-radius: 40px;
+      padding: 0.25rem 1rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+      display: inline-block;
+    }
+
+    .mock-product {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      align-items: center;
+    }
+
+    /* features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .feature-card {
+      padding: 1.8rem;
+      text-align: center;
+      border-radius: 2rem;
+    }
+
+    .feature-icon {
+      font-size: 2.6rem;
+      background: linear-gradient(145deg, #667eea, #a05bc2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    /* demo preview section (comparison cards) */
+    .demo-showcase {
+      background: rgba(255,255,240,0.25);
+      border-radius: 3rem;
+      padding: 2rem;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    .comparison-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 1.8rem;
+      padding: 1.2rem;
+      width: 240px;
+      transition: all 0.3s;
+      box-shadow: 0 15px 35px -12px rgba(0,0,0,0.1);
+    }
+
+    .product-card.best {
+      border: 2px solid gold;
+      position: relative;
+      background: linear-gradient(145deg, #fff, #fff9ef);
+    }
+
+    .best-tag {
+      position: absolute;
+      top: -12px;
+      right: 16px;
+      background: #f5b042;
+      color: #2c2c2c;
+      border-radius: 40px;
+      padding: 0.2rem 0.9rem;
+      font-weight: 800;
+      font-size: 0.7rem;
+    }
+
+    /* testimonials */
+    .testimonial-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .testimonial-card {
+      padding: 1.8rem;
+      width: 300px;
+      text-align: center;
+    }
+
+    .stars {
+      color: #fbbf24;
+      margin-bottom: 0.8rem;
+    }
+
+    /* footer */
+    footer {
+      background: rgba(10, 10, 20, 0.7);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255,255,255,0.2);
+      color: #ddd;
+      padding: 2.5rem 0;
+      margin-top: 2rem;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      h1 { font-size: 2.8rem; }
+      .hero-grid { flex-direction: column; }
+      .container { padding: 0 1.5rem; }
+      section { padding: 3rem 0; }
+    }
+
+    /* search bar style */
+    .search-wrapper {
+      background: white;
+      border-radius: 3rem;
+      padding: 0.4rem 0.4rem 0.4rem 1.8rem;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      margin-top: 1.8rem;
+    }
+    .search-wrapper input {
+      border: none;
+      font-size: 1rem;
+      padding: 0.8rem 0;
+      width: 260px;
+      outline: none;
+      font-family: inherit;
+    }
+    .search-wrapper button {
+      background: linear-gradient(100deg, #667eea, #764ba2);
+      border: none;
+      padding: 0.7rem 1.8rem;
+      border-radius: 2.5rem;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      margin-right: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      color: white;
+      font-weight: 500;
+    }
+
+    .nav-signup {
+      padding: 0.6rem 1.2rem;
+    }
+
+    .hero-badge {
+      background: rgba(255, 255, 255, 0.3);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .hero-description {
+      font-size: 1.2rem;
+      margin: 1.5rem 0;
+      color: #f0f0fc;
+      max-width: 90%;
+    }
+
+    .hero-cta-wrapper {
+      margin-top: 1.5rem;
+    }
+
+    .hero-cta {
+      background: white;
+      color: #4a2f6b;
+      box-shadow: none;
+      font-weight: 700;
+    }
+
+    .floating-card-first {
+      margin-bottom: 1.5rem;
+    }
+
+    .deal-score-green {
+      color: #2b9348;
+    }
+
+    .price-badge-margin {
+      margin-top: 8px;
+    }
+
+    .features-section {
+      background: rgba(255, 255, 255, 0.1);
+      margin-top: 1rem;
+    }
+
+    .features-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .features-title {
+      color: white;
+    }
+
+    .features-subtitle {
+      color: #efeaff;
+    }
+
+    .demo-header {
+      text-align: center;
+    }
+
+    .demo-title {
+      color: #1f1a3e;
+    }
+
+    .demo-subtitle {
+      margin-bottom: 1rem;
+    }
+
+    .product-icon {
+      font-size: 2rem;
+    }
+
+    .strikethrough-gray {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .demo-cta-wrapper {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .testimonials-title {
+      color: white;
+    }
+
+    .testimonials-subtitle {
+      color: #e9dcff;
+    }
+
+    .footer-logo {
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .footer-description {
+      margin-top: 0.5rem;
+    }
+
+    .footer-social {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-divider {
+      margin: 2rem 0 1rem;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .footer-copyright {
+      text-align: center;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<div class="container">
+  <nav>
+    <div class="logo"><i class="fas fa-robot logo-icon"></i> SmartMart</div>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Features</a>
+      <a href="#" class="nav-link">Demo</a>
+      <a href="signup.html" class="btn-outline btn nav-signup">Sign up →</a>
+    </div>
+  </nav>
+</div>
+
+<main>
+  <!-- HERO SECTION -->
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <span class="price-badge hero-badge">✨ AI-powered 2025</span>
+        <h1>AI Price Comparison <br>Made <span class="gradient-text">Smart</span></h1>
+        <p class="hero-description">Real-time comparison across 1000+ stores. Get the best deal, instantly with SmartMart AI.</p>
+        <div class="search-wrapper">
+          <input type="text" placeholder="Search any product... e.g., iPhone 15">
+          <button id="tryNowBtn" type="button"><i class="fas fa-search"></i> Try Now</button>
+        </div>
+        <div class="hero-cta-wrapper">
+          <a href="signup.html" class="btn btn-primary hero-cta">Get Started →</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="floating-card floating-card-first">
+          <div><i class="fab fa-amazon"></i> <i class="fab fa-alipay"></i> <i class="fas fa-store"></i> </div>
+          <div class="mock-product"><span><strong>Sony WH-1000XM5</strong></span><span>$298</span></div>
+          <div class="mock-product"><span>🔍 AI Deal Score</span><span class="deal-score-green">97%</span></div>
+          <div class="price-badge price-badge-margin">🚀 Best price drop -12%</div>
+        </div>
+        <div class="floating-card">
+          <div><i class="fas fa-microchip"></i> NVIDIA RTX 4070</div>
+          <div class="mock-product"><span>💰 Price trend</span><span>↓ $549</span></div>
+          <div class="mock-product"><span>⚡ SmartAlert</span><span>lowest in 30d</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES SECTION -->
+  <section class="features-section">
+    <div class="container">
+      <div class="features-header">
+        <h2 class="features-title">Intelligent features <br>that save you money</h2>
+        <p class="features-subtitle">SmartMart AI scans, compares and notifies you on unbeatable deals.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-brain"></i></div>
+          <h3>AI Recommendations</h3>
+          <p>Personalized picks based on your preferences & price history.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Real-Time Price Comparison</h3>
+          <p>Compare live prices from Amazon, Walmart, BestBuy & more.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-tag"></i></div>
+          <h3>Best Deal Hunter</h3>
+          <p>Exclusive coupons + cashback alerts, always lowest price.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-robot"></i></div>
+          <h3>Smart Assistant</h3>
+          <p>Chat with our AI to find hidden deals and price drops.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO/PREVIEW SECTION with 3D comparison cards -->
+  <div class="container">
+    <div class="demo-showcase">
+      <div class="demo-header">
+        <h2 class="demo-title">Live Deal Intelligence</h2>
+        <p class="demo-subtitle">Our AI instantly highlights the best value</p>
+      </div>
+      <div class="comparison-row">
+        <div class="product-card">
+          <i class="fas fa-headphones product-icon"></i>
+          <h4>AirPods Pro 2</h4>
+          <div>$189 <span class="strikethrough-gray">$249</span></div>
+          <div>⭐ 4.8 · 12k+</div>
+        </div>
+        <div class="product-card best">
+          <div class="best-tag"><i class="fas fa-crown"></i> BEST DEAL</div>
+          <i class="fas fa-laptop product-icon"></i>
+          <h4>MacBook Air M2</h4>
+          <div>$999 <span class="strikethrough-gray">$1199</span></div>
+          <div>🔥 AI Score: 9.7</div>
+        </div>
+        <div class="product-card">
+          <i class="fas fa-tv product-icon"></i>
+          <h4>Samsung 65" QLED</h4>
+          <div>$798 <span class="strikethrough-gray">$1099</span></div>
+          <div>⚡ price drop alert</div>
+        </div>
+        <div class="product-card">
+          <i class="fas fa-shoe-prints product-icon"></i>
+          <h4>Nike Air Max</h4>
+          <div>$119 · Deal: -20%</div>
+          <div>📦 limited stock</div>
+        </div>
+      </div>
+      <div class="demo-cta-wrapper">
+        <a href="signup.html" class="btn btn-primary">Try comparison now →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS TRUST SECTION -->
+  <section>
+    <div class="container">
+      <div class="testimonials-header">
+        <h2 class="testimonials-title">Trusted by smart shoppers</h2>
+        <p class="testimonials-subtitle">Join thousands of users saving money with AI.</p>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p>"SmartMart saved me $400 on my new laptop. The AI comparison is surreal!"</p>
+          <strong>— Alex Chen</strong>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p>"I love the real-time dashboard. Finally, a price tool that actually works."</p>
+          <strong>— Jessica Wu</strong>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+          <p>"Best deal alerts, hands down. The UI is stunning and feels premium."</p>
+          <strong>— Marcus T.</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <div>
+        <div class="logo footer-logo">SmartMart</div>
+        <p class="footer-description">AI price intelligence for modern shoppers.</p>
+        <div class="footer-social">
+          <i class="fab fa-twitter"></i> <i class="fab fa-instagram"></i> <i class="fab fa-github"></i>
+        </div>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <p>Comparison</p><p>AI Deals</p><p>Browser Extension</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <p>About</p><p>Careers</p><p>Blog</p>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <p>Privacy</p><p>Terms</p>
+      </div>
+    </div>
+    <hr class="footer-divider">
+    <p class="footer-copyright">© 2025 SmartMart — AI price comparison reinvented.</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('tryNowBtn')?.addEventListener('click', () => {
+    window.location.href = 'signup.html';
+  });
+</script>
+</body>
+</html>
