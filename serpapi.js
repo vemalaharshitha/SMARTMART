@@ -2,7 +2,7 @@ const axios = require("axios");
 
 async function fetchSerp(query) {
     try {
-        const API_KEY = "a0bce3b543f3d2644efe4607615996e56e7a9d922c9a67f60749df4971a31b22";
+        const API_KEY = "pasteyourapi";
 
         const url = `https://serpapi.com/search.json?q=${query}&tbm=shop&api_key=${API_KEY}&gl=in`;
 
